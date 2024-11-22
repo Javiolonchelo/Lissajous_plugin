@@ -9,7 +9,7 @@
 - Fade out de los colores en función del tiempo (puede salir fatal jajaja)
 - Incorporar librería [melatonin blur](https://github.com/sudara/melatonin_blur) para sombras y brillos optimizados.
 - Icono DVD que choca con la pantalla, surge en instantes aleatorios, tiene un tiempo de vida de varios rebotes y resetea el timer.
-- Gif de gato happy happy happy ![GIF](https://www.google.com/url?sa=i&url=https%3A%2F%2Ftenor.com%2Fview%2Fhappy-happy-happy-happy-happy-happy-cat-jumping-happy-cat-gif-17498744034444290732&psig=AOvVaw1i9ggoDgHYCUKyGoDG9FB4&ust=1732391862397000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCKDnid7c8IkDFQAAAAAdAAAAABAi)
+- Gif de gato happy happy happy ![GIF](https://media.tenor.com/8tgG_KyJqqwAAAAj/happy-happy-happy-happy.gif)
 
 
 ## Setup the project
