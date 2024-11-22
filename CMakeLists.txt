@@ -1,29 +1,32 @@
 # dBob Studio 2024 - Lissajous Plugin
-# Copyright (c) 2024 dBob Studio
-# All rights reserved
-# 
 # Authors:
 #   Hao Feng Chen Fu
 #   Javier Rodrigo López
 
 cmake_minimum_required(VERSION 3.15)
 
+if (WIN32)
+    set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
+endif()
+
 # Customize you plugin here
-set(COMPANY_NAME "My company")
-set(PROJECT_NAME MY_PLUGIN)
-set(PLUGIN_TARGET_NAME "MyPlugin")
-set(PLUGIN_FINAL_NAME "Fancy EQ")
-set(PLUGIN_MANUFACTURER_CODE myCo)
-set(PLUGIN_CODE myEq)
+set(COMPANY_NAME "dBob Studio")
+set(PROJECT_NAME "Lissajous Plugin")
+set(PLUGIN_TARGET_NAME "Lissajous")
+set(PLUGIN_FINAL_NAME "Lissajous")
+set(PLUGIN_MANUFACTURER_CODE dBob)
+set(PLUGIN_CODE LDvD)
 set(FORMATS AU VST3 Standalone)
 
 # Paths
 set(ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-set(MODULES_PATH "${ROOT_PATH}/modules")
+set(LIBS_PATH "${ROOT_PATH}/libs")
 
 project(${PROJECT_NAME} VERSION 0.0.1)
 
-add_subdirectory(${MODULES_PATH}/JUCE)
+set(JUCE_PATH ${LIBS_PATH}/JUCE/)
+message(STATUS "JUCE_PATH: ${JUCE_PATH}")
+add_subdirectory(${JUCE_PATH})
 
 # juce_set_vst2_sdk_path(...)
 # juce_set_aax_sdk_path(...)
@@ -47,14 +50,13 @@ set(SOURCE_PATH ${ROOT_PATH}/src)
 
 target_sources(${PLUGIN_TARGET_NAME}
     PRIVATE
-
     # .cpp
     ${SOURCE_PATH}/PluginEditor.cpp
     ${SOURCE_PATH}/PluginProcessor.cpp
-
-    # .h
-    ${SOURCE_PATH}/PluginEditor.h
-    ${SOURCE_PATH}/PluginProcessor.h
+)
+target_include_directories(${PLUGIN_TARGET_NAME}
+    PRIVATE
+    ${SOURCE_PATH}
 )
 
 target_compile_definitions(${PLUGIN_TARGET_NAME}
