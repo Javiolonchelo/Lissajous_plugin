@@ -8,7 +8,9 @@
 - Centro de coordenadas de las curvas no fijo.
 - Fade out de los colores en función del tiempo (puede salir fatal jajaja)
 - Incorporar librería [melatonin blur](https://github.com/sudara/melatonin_blur) para sombras y brillos optimizados.
-- Icono DVD que choca con la pantalla, surge en instantes aleatorios, tiene un tiempo de vida de varios rebotes y resetea el timer.
+- Icono DVD que choca con la pantalla, surge cuando no se está procesando sonido (tras cierto timeout), tal vez añadiendo un sonido de grillos que sucede cada cierto tiempo (calculado aleatoriamente, como la música del Minecraft). 
+> [!NOTE]
+> También se puede reproducir ese sonido con cada rebote.
 - Gif de gato happy happy happy ![GIF](https://media.tenor.com/8tgG_KyJqqwAAAAj/happy-happy-happy-happy.gif)
 
 
