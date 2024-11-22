@@ -1,5 +1,17 @@
 # Lissajous Plugin (and DVD thing)
 
+## Brainstorming
+
+- Operaciones binarias para calcular el color de las figuras.
+- Frecuencia de muestreo no debería afectar al color, pero la amplitud (y a lo mejor la frecuencia de la señal real sí)
+- ¿¿¿¿Cómo se representan las frecuencias???? Caso difícil: Buffer de 32 muestras, periodo de la onda son 100 muestras.
+- Centro de coordenadas de las curvas no fijo.
+- Fade out de los colores en función del tiempo (puede salir fatal jajaja)
+- Incorporar librería [melatonin blur](https://github.com/sudara/melatonin_blur) para sombras y brillos optimizados.
+- Icono DVD que choca con la pantalla, surge en instantes aleatorios, tiene un tiempo de vida de varios rebotes y resetea el timer.
+- Gif de gato happy happy happy ![GIF](https://www.google.com/url?sa=i&url=https%3A%2F%2Ftenor.com%2Fview%2Fhappy-happy-happy-happy-happy-happy-cat-jumping-happy-cat-gif-17498744034444290732&psig=AOvVaw1i9ggoDgHYCUKyGoDG9FB4&ust=1732391862397000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCKDnid7c8IkDFQAAAAAdAAAAABAi)
+
+
 ## Setup the project
 
 From a folder of your choice, execute the following commands to clone the contents of the repository.
@@ -54,5 +66,3 @@ Once you start debugging, the audio host will open, and you can load your plugin
 5. Save the graph. In the menu, press "Save as" and select the root folder.
 
 The last step ensures that whenever you debug the VST3, it's ready to go.
-
-<!--TODO: Add instructions for all formats. -->
