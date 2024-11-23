@@ -53,6 +53,7 @@ target_sources(${PLUGIN_TARGET_NAME}
     # .cpp
     ${SOURCE_PATH}/PluginEditor.cpp
     ${SOURCE_PATH}/PluginProcessor.cpp
+    ${SOURCE_PATH}/CustomLookAndFeel.cpp
 )
 target_include_directories(${PLUGIN_TARGET_NAME}
     PRIVATE
