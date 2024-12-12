@@ -4,34 +4,46 @@
 #   Javier Rodrigo López
 
 cmake_minimum_required(VERSION 3.15)
+set(CMAKE_CXX_STANDARD 20)
+project(Lissajous_Plugin VERSION 0.0.2)
 
 if (WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
+    set(CMAKE_GENERATOR "Visual Studio 17 2022")
+    set(VS_STARTUP_PROJECT ${PROJECT_NAME}_Standalone)
 endif()
 
-# Customize you plugin here
+
+# Customize the plugin here
 set(COMPANY_NAME "dBob Studio")
-set(PROJECT_NAME "Lissajous Plugin")
-set(PLUGIN_TARGET_NAME "Lissajous")
-set(PLUGIN_FINAL_NAME "Lissajous")
 set(PLUGIN_MANUFACTURER_CODE dBob)
 set(PLUGIN_CODE LDvD)
 set(FORMATS AU VST3 Standalone)
+set(PLUGIN_FINAL_NAME Lissajous)
 
 # Paths
-set(ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-set(LIBS_PATH "${ROOT_PATH}/libs")
+set(LIBS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-project(${PROJECT_NAME} VERSION 0.0.1)
 
-set(JUCE_PATH ${LIBS_PATH}/JUCE/)
-message(STATUS "JUCE_PATH: ${JUCE_PATH}")
-add_subdirectory(${JUCE_PATH})
+# Fetch the libraries
+Include(FetchContent)
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.7.1
+)
+FetchContent_Declare(
+  JUCE
+  GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
+  GIT_TAG        8.0.4
+)
+FetchContent_MakeAvailable(Catch2)
+FetchContent_MakeAvailable(JUCE)
 
 # juce_set_vst2_sdk_path(...)
 # juce_set_aax_sdk_path(...)
-juce_add_plugin(${PLUGIN_TARGET_NAME}
-
+juce_add_plugin(${PROJECT_NAME}
     COMPANY_NAME ${COMPANY_NAME}
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
@@ -42,32 +54,35 @@ juce_add_plugin(${PLUGIN_TARGET_NAME}
     PLUGIN_CODE ${PLUGIN_CODE}
     FORMATS ${FORMATS}
     PRODUCT_NAME ${PLUGIN_FINAL_NAME}
+    BUNDLE_ID com.dBobStudio.${PLUGIN_FINAL_NAME}
 )
+juce_add_binary_data(BinaryData
+    SOURCES
+    ${CMAKE_SOURCE_DIR}/assets/dvd.png
+)
+juce_generate_juce_header(${PROJECT_NAME})
 
-juce_generate_juce_header(${PLUGIN_TARGET_NAME})
 
-set(SOURCE_PATH ${ROOT_PATH}/src)
-
-target_sources(${PLUGIN_TARGET_NAME}
+target_sources(${PROJECT_NAME}
     PRIVATE
     # .cpp
     ${SOURCE_PATH}/PluginEditor.cpp
     ${SOURCE_PATH}/PluginProcessor.cpp
     ${SOURCE_PATH}/CustomLookAndFeel.cpp
 )
-target_include_directories(${PLUGIN_TARGET_NAME}
+target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${SOURCE_PATH}
 )
-
-target_compile_definitions(${PLUGIN_TARGET_NAME}
+target_compile_definitions(${PROJECT_NAME}
     PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
 )
-target_link_libraries(${PLUGIN_TARGET_NAME}
+target_link_libraries(${PROJECT_NAME}
     PRIVATE
+    BinaryData
     juce::juce_audio_utils
     PUBLIC
     juce::juce_recommended_config_flags
