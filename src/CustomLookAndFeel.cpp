@@ -1,10 +1,8 @@
 //  Studio 2024 - All rights reserved
 
-#include "CustomLookAndFeel.h"
-
 #include <JuceHeader.h>
 
-using namespace juce;
+#include "CustomLookAndFeel.h"
 
 CustomLookAndFeel::CustomLookAndFeel() {
     // setColour(RoundedMeter::backgroundColourId, DBobsColours::background);
