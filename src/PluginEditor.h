@@ -5,7 +5,7 @@
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor, private juce::Timer {
    public:
-    explicit AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor&);
+    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor&);
     ~AudioPluginAudioProcessorEditor() override;
 
     //==============================================================================
@@ -15,22 +15,41 @@ class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor,
    private:
     AudioPluginAudioProcessor& processorRef;
 
+    // Buttons
+    juce::ToggleButton bypassButton;
+
+    // Attachments
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAttachment;
+
     // Assets
-    juce::Image DVD_asset;
-	int mainWindowWidth, mainWindowHeight, DVD_width, DVD_height;
-	juce::Point<int> DVD_position;
-	bool directionPositive[2];
+    int              logoWidth{111}, logoHeight{50};
+    juce::Image      logoAsset{juce::ImageCache::getFromMemory(BinaryData::dvd_png, BinaryData::dvd_pngSize)};
+    juce::Point<int> logoPosition{0, 0};
+    bool             direction[2]{true, true};
+    int              stepSize{1};
+
+    // Main window
+    int mainWindowWidth, mainWindowHeight;
+
+    // Beam
+    juce::Point<float> previousPos, currentPos;
 
     // Timer callback
     void timerCallback() final {
-		DVD_position += juce::Point<int>(directionPositive[0] ? 1 : -1, directionPositive[1] ? 1 : -1);
-		if (DVD_position.getX() > getWidth() - DVD_width || DVD_position.getX() < 0) {
-			directionPositive[0] = !directionPositive[0];
-		}
-		if (DVD_position.getY() > getHeight() - DVD_height || DVD_position.getY() < 0) {
-			directionPositive[1] = !directionPositive[1];
-		}
-		repaint();
+        if (processorRef.apvts.getParameterAsValue(params::bypass.getParamID()) == 0.0f) {
+            repaint();
+        } else {
+            auto deltaX = direction[0] ? stepSize : -stepSize;
+            auto deltaY = direction[1] ? stepSize : -stepSize;
+            logoPosition += juce::Point<int>(deltaX, deltaY);
+
+            auto limitX = getWidth() - logoWidth;
+            auto limitY = getHeight() - logoHeight;
+
+            if (logoPosition.getX() > limitX || logoPosition.getX() < 0) { direction[0] = !direction[0]; }
+            if (logoPosition.getY() > limitY || logoPosition.getY() < 0) { direction[1] = !direction[1]; }
+            repaint();
+        }
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)

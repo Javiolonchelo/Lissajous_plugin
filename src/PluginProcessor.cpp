@@ -1,6 +1,5 @@
-#include "PluginProcessor.h"
-
 #include "PluginEditor.h"
+#include "PluginProcessor.h"
 
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
@@ -11,7 +10,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      ) {
+                         ),
+      apvts(*this, nullptr, "Parameters", createParameters()) {
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor() {}
@@ -60,7 +60,7 @@ const juce::String AudioPluginAudioProcessor::getProgramName(int index) {
     return {};
 }
 
-void AudioPluginAudioProcessor::changeProgramName(int index, const juce::String &newName) {
+void AudioPluginAudioProcessor::changeProgramName(int index, const juce::String& newName) {
     juce::ignoreUnused(index, newName);
 }
 
@@ -76,7 +76,7 @@ void AudioPluginAudioProcessor::releaseResources() {
     // spare memory, etc.
 }
 
-bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
+bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const {
 #if JucePlugin_IsMidiEffect
     juce::ignoreUnused(layouts);
     return true;
@@ -91,7 +91,7 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout &layout
 #endif
 }
 
-void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages) {
+void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
     juce::ignoreUnused(midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
@@ -100,26 +100,40 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) buffer.clear(i, 0, buffer.getNumSamples());
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
-        auto *channelData = buffer.getWritePointer(channel);
-        juce::ignoreUnused(channelData);
+    auto* leftChannel  = buffer.getWritePointer(0);
+    auto* rightChannel = buffer.getWritePointer(1);
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+        apvts.getParameter(params::beam_x.getParamID())->setValueNotifyingHost(leftChannel[sample]);
+        apvts.getParameter(params::beam_y.getParamID())->setValueNotifyingHost(rightChannel[sample]);
     }
 }
 
 //==============================================================================
 bool AudioPluginAudioProcessor::hasEditor() const { return true; }
 
-juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor() {
+juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor() {
     return new AudioPluginAudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock &destData) { juce::ignoreUnused(destData); }
+void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock& destData) { juce::ignoreUnused(destData); }
 
-void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
+void AudioPluginAudioProcessor::setStateInformation(const void* data, int sizeInBytes) {
     juce::ignoreUnused(data, sizeInBytes);
+}
+
+juce::AudioProcessorParameter* AudioPluginAudioProcessor::getBypassParameter() const {
+    return apvts.getParameter(params::bypass.getParamID());
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
+    juce::AudioProcessorValueTreeState::ParameterLayout params;
+    params.add(std::make_unique<juce::AudioParameterBool>(params::bypass, "Bypass", false));
+    params.add(std::make_unique<juce::AudioParameterFloat>(params::beam_x, "Beam X Position", 0.0f, 1.0f, 0.5f));
+    params.add(std::make_unique<juce::AudioParameterFloat>(params::beam_y, "Beam Y Position", 0.0f, 1.0f, 0.5f));
+    return params;
 }
 
 //==============================================================================
 // This creates new instances of the plugin..
-juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() { return new AudioPluginAudioProcessor(); }
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new AudioPluginAudioProcessor(); }
