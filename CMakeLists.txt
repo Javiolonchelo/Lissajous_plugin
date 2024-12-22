@@ -10,8 +10,8 @@ project(Lissajous_Plugin VERSION 0.0.2)
 if (WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
     set(CMAKE_GENERATOR "Visual Studio 17 2022")
-    set(VS_STARTUP_PROJECT ${PROJECT_NAME}_Standalone)
 endif()
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Lissajous_Plugin_Standalone)
 
 
 # Customize the plugin here
@@ -22,7 +22,6 @@ set(FORMATS AU VST3 Standalone)
 set(PLUGIN_FINAL_NAME Lissajous)
 
 # Paths
-set(LIBS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 
@@ -55,6 +54,7 @@ juce_add_plugin(${PROJECT_NAME}
     FORMATS ${FORMATS}
     PRODUCT_NAME ${PLUGIN_FINAL_NAME}
     BUNDLE_ID com.dBobStudio.${PLUGIN_FINAL_NAME}
+    COPY_PLUGIN_AFTER_BUILD TRUE # This copies the binaries to the defualt paths for plugin installation
 )
 juce_add_binary_data(BinaryData
     SOURCES
@@ -62,23 +62,28 @@ juce_add_binary_data(BinaryData
 )
 juce_generate_juce_header(${PROJECT_NAME})
 
-
 target_sources(${PROJECT_NAME}
     PRIVATE
     # .cpp
+    ${SOURCE_PATH}/CustomLookAndFeel.cpp
     ${SOURCE_PATH}/PluginEditor.cpp
     ${SOURCE_PATH}/PluginProcessor.cpp
-    ${SOURCE_PATH}/CustomLookAndFeel.cpp
+
+    # .h
+    ${SOURCE_PATH}/PluginUtilities.h
+    $<TARGET_PROPERTY:${PROJECT_NAME},JUCE_GENERATED_SOURCES_DIRECTORY>/JuceHeader.h
 )
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${SOURCE_PATH}
 )
+message(STATUS "Source path: ${SOURCE_PATH}")
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
+    DONT_SET_USING_JUCE_NAMESPACE 
 )
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
