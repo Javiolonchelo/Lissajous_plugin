@@ -1,4 +1,6 @@
 /build
 /offline
 /.vs
+cmake-build-debug/
 *.filtergraph
+.idea
